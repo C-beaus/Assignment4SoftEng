@@ -37,7 +37,7 @@ public class KibenianArabicConverter {
      *
      * @return An arabic value
      */
-    public int toArabic() {
+    public int toArabic(){
         // TODO Fill in the method's body
         return 1;
     }
@@ -53,3 +53,83 @@ public class KibenianArabicConverter {
     }
 
 }
+
+//public class KibenianArabicConverter {
+//    private final static String[] KIBENIAN_SYMBOLS = {"_", "L", "X", "V", "I"};
+//    private final static int[] ARABIC_VALUES = {60, 50, 10, 5, 1};
+//    private final static int MIN_ARABIC_VALUE = 1;
+//    private final static int MAX_ARABIC_VALUE = 60;
+//
+//    private String number;
+//
+//    public KibenianArabicConverter(String number) throws MalformedNumberException, ValueOutOfBoundsException {
+//        this.number = number;
+//        validateNumber();
+//    }
+//
+//    private void validateNumber() throws MalformedNumberException, ValueOutOfBoundsException {
+//        if (!number.matches("[0-9_]+")) {
+//            throw new MalformedNumberException("Number contains invalid characters: " + number);
+//        }
+//
+//        if (number.startsWith("0")) {
+//            throw new ValueOutOfBoundsException("Number cannot have leading zeros: " + number);
+//        }
+//
+//        int arabicValue = toArabic();
+//        if (arabicValue < MIN_ARABIC_VALUE || arabicValue > MAX_ARABIC_VALUE) {
+//            throw new ValueOutOfBoundsException("Number is out of bounds: " + number);
+//        }
+//    }
+//
+//    public String toKibenian() {
+//        int arabicValue = Integer.parseInt(number);
+//        StringBuilder sb = new StringBuilder();
+//
+//        for (int i = 0; i < KIBENIAN_SYMBOLS.length; i++) {
+//            while (arabicValue >= ARABIC_VALUES[i]) {
+//                sb.append(KIBENIAN_SYMBOLS[i]);
+//                arabicValue -= ARABIC_VALUES[i];
+//            }
+//        }
+//
+//        return sb.toString();
+//    }
+//
+//    public int toArabic() {
+//        int arabicValue = 0;
+//        int lastArabicValue = 0;
+//
+//        for (int i = 0; i < number.length(); i++) {
+//            char c = number.charAt(i);
+//            int arabicDigitValue = getArabicDigitValue(c);
+//
+//            if (arabicDigitValue > lastArabicValue) {
+//                arabicValue += (arabicDigitValue - 2 * lastArabicValue);
+//            } else {
+//                arabicValue += arabicDigitValue;
+//            }
+//
+//            lastArabicValue = arabicDigitValue;
+//        }
+//
+//        return arabicValue;
+//    }
+//
+//    private int getArabicDigitValue(char kibenianSymbol) {
+//        switch (kibenianSymbol) {
+//            case '_':
+//                return 60;
+//            case 'L':
+//                return 50;
+//            case 'X':
+//                return 10;
+//            case 'V':
+//                return 5;
+//            case 'I':
+//                return 1;
+//            default:
+//                throw new IllegalArgumentException("Invalid Kibenian symbol: " + kibenianSymbol);
+//        }
+//    }
+//}
