@@ -54,21 +54,22 @@ public class KibenianArabicConverter {
          * I {0,4}
          *
          */
-//        Pattern patternKibenian = Pattern.compile("^(L?|(X{0,4})(V?)(I{0,4}))$");
-////        Pattern patternKibenian = Pattern.compile("^((L|X{0,4})(IX|IV|V?I{0,3})|X{0,4}(XC|XL|L?X{0,3})|[IVX]{1,4})?(_{1}(L|X{0,4})(IX|IV|V?I{0,3})|X{0,4}(XC|XL|L?X{0,3})|[IVX]{1,4})?(_{1}(L|X{0,4})(IX|IV|V?I{0,3})|X{0,4}(XC|XL|L?X{0,3})|[IVX]{1,4})?$");
-//        if(numberIsKibenian(number)){
-//            if (!patternKibenian.matcher(number).matches()) {
-//                throw new MalformedNumberException("Number contains invalid characters: " + number);
-//            }
-//        }
-//        //else if contains Arabic characters run Arabic check
-//        else if (numberIsArabic(number)){
-//
-//        }
-//        //neither
-//        else{
-//            throw new MalformedNumberException("Number contains invalid characters: " + number);
-//        }
+        String string = "(L?X{0,4}(V?)(I{0,4}))";
+        Pattern patternKibenian = Pattern.compile("^"+ string + "|" + string + "_"+ "|" + string + "_" + string + "|" + string + "__" + "|" + string + "_" + string + "_" + "|" + string + "__" + string + "|" + string + "_" + string + "_" + string + " $");
+        Pattern test = Pattern.compile("^" + string + "__");
+        if(numberIsKibenian(number)){
+            if (!patternKibenian.matcher(number).matches()) {
+                throw new MalformedNumberException("Number contains invalid characters: " + number);
+            }
+        }
+        //else if contains Arabic characters run Arabic check
+        else if (numberIsArabic(number)){
+
+        }
+        //neither
+        else{
+            throw new MalformedNumberException("Number contains invalid characters: " + number);
+        }
         this.number = number;
     }
 
