@@ -100,42 +100,48 @@ public class KibenianArabicConverter {
 //        if(numberInt >= 1 && numberInt <= 215999) {
 //            return numberInt;
 //        }
-        int result = 0;
-        int subTotal = 0;
-        int multiplier = 1;
-
-        for (int i = number.length() - 1; i >= 0; i--) {
-            char c = number.charAt(i);
-
-            switch (c) {
-                case 'I':
-                    subTotal += 1;
-                    break;
-                case 'V':
-                    subTotal += 5;
-                    break;
-                case 'X':
-                    subTotal += 10;
-                    break;
-                case 'L':
-                    subTotal += 50;
-                    break;
-                case '_':
-                    result += subTotal * multiplier;
-                    subTotal = 0;
-
-                    if (i > 1 && number.charAt(i - 2) == '_') {
-                        multiplier *= 3600;
-                    } else {
-                        multiplier *= 60;
-                    }
-
-                    break;
-            }
+        if (number.matches("[0-9]+")){
+            return Integer.parseInt(number);
         }
+        else {
+            int result = 0;
+            int subTotal = 0;
+            int multiplier = 1;
 
-        result += subTotal * multiplier;
-        return result;
+            for (int i = number.length() - 1; i >= 0; i--) {
+                char c = number.charAt(i);
+
+                switch (c) {
+                    case 'I':
+                        subTotal += 1;
+                        break;
+                    case 'V':
+                        subTotal += 5;
+                        break;
+                    case 'X':
+                        subTotal += 10;
+                        break;
+                    case 'L':
+                        subTotal += 50;
+                        break;
+                    case '_':
+                        result += subTotal * multiplier;
+                        subTotal = 0;
+
+                        if (i > 1 && number.charAt(i - 2) == '_') {
+                            multiplier *= 3600;
+                        } else {
+                            multiplier *= 60;
+                        }
+
+                        break;
+                }
+
+            }
+
+            result += subTotal * multiplier;
+            return result;
+        }
     }
 
     /**
@@ -145,148 +151,153 @@ public class KibenianArabicConverter {
      */
     public String toKibenian() throws ValueOutOfBoundsException {
         // TODO Fill in the method's body
-        int numInt = Integer.parseInt(number);
-        if (numInt <= 0 || numInt > 215999) {
-            throw new ValueOutOfBoundsException("Number is out of bounds");
+        if (!number.matches("[0-9]+")){
+            return number;
         }
-        StringBuilder stringBuilder = new StringBuilder();
-        int valueLeft = numInt;
-        int modulus = valueLeft % 3600;
-        int lastValue = valueLeft;
+        else {
+            int numInt = Integer.parseInt(number);
+            if (numInt <= 0 || numInt > 215999) {
+                throw new ValueOutOfBoundsException("Number is out of bounds");
+            }
+            StringBuilder stringBuilder = new StringBuilder();
+            int valueLeft = numInt;
+            int modulus = valueLeft % 3600;
+            int lastValue = valueLeft;
 //        valueLeft /= 3600;
-        Boolean secondUnderscore = false;
-        Boolean firstUnderscore = false;
-        int valueSaver = 0;
-        int initialValue = valueLeft;
-        //1 pass
-        if (modulus > 0 && !(modulus == valueLeft)) {
-            int pass1Total = 0;
-            int valueLeft2 = lastValue - 3599;
-            valueSaver = valueLeft2;
-            int beforeUnderscore2 = valueLeft2 / 3599;
+            Boolean secondUnderscore = false;
+            Boolean firstUnderscore = false;
+            int valueSaver = 0;
+            int initialValue = valueLeft;
+            //1 pass
+            if (modulus > 0 && !(modulus == valueLeft)) {
+                int pass1Total = 0;
+                int valueLeft2 = lastValue - 3599;
+                valueSaver = valueLeft2;
+                int beforeUnderscore2 = valueLeft2 / 3599;
 //            beforeUnderscore2 -= modulus;
-            if ((beforeUnderscore2 - 50) >= 0) {
-                stringBuilder.append("L");
-                beforeUnderscore2 -= 50;
-                secondUnderscore = true;
-                pass1Total += 50;
+                if ((beforeUnderscore2 - 50) >= 0) {
+                    stringBuilder.append("L");
+                    beforeUnderscore2 -= 50;
+                    secondUnderscore = true;
+                    pass1Total += 50;
 //          int beforeTwoModulus = valueLeft2 % 3600
-            }
-            for (int i = 0; i < 4; i++) {
-                if ((beforeUnderscore2 - 10) >= 0) {
-                    stringBuilder.append("X");
-                    beforeUnderscore2 -= 10;
-                    secondUnderscore = true;
-                    pass1Total =+ 10;
-//            int lastValue2 = beforeTwoModulus
                 }
-            }
-            if ((beforeUnderscore2 - 5) >= 0) {
-                stringBuilder.append("V");
-                beforeUnderscore2 -= 5;
-                secondUnderscore = true;
-                pass1Total += 5;
-            }
-            for (int i = 0; i < 4; i++) {
-                if ((beforeUnderscore2 - 1) >= 0) {
-                    stringBuilder.append("I");
-                    beforeUnderscore2 -= 1;
-                    secondUnderscore = true;
-                    pass1Total +=1;
+                for (int i = 0; i < 4; i++) {
+                    if ((beforeUnderscore2 - 10) >= 0) {
+                        stringBuilder.append("X");
+                        beforeUnderscore2 -= 10;
+                        secondUnderscore = true;
+                        pass1Total = +10;
 //            int lastValue2 = beforeTwoModulus
+                    }
                 }
-            }
-            if (secondUnderscore) {
-                stringBuilder.append("_");
-                valueLeft = valueLeft - pass1Total*3600;
+                if ((beforeUnderscore2 - 5) >= 0) {
+                    stringBuilder.append("V");
+                    beforeUnderscore2 -= 5;
+                    secondUnderscore = true;
+                    pass1Total += 5;
+                }
+                for (int i = 0; i < 4; i++) {
+                    if ((beforeUnderscore2 - 1) >= 0) {
+                        stringBuilder.append("I");
+                        beforeUnderscore2 -= 1;
+                        secondUnderscore = true;
+                        pass1Total += 1;
+//            int lastValue2 = beforeTwoModulus
+                    }
+                }
+                if (secondUnderscore) {
+                    stringBuilder.append("_");
+                    valueLeft = valueLeft - pass1Total * 3600;
 //                valueLeft = valueLeft - valueSaver;
 //                modulus = valueLeft % 60;
-            }
-        } else if (modulus == 0) {
-            stringBuilder.append("I_");
-            valueLeft = valueLeft - 3600;
+                }
+            } else if (modulus == 0) {
+                stringBuilder.append("I_");
+                valueLeft = valueLeft - 3600;
 //            modulus = valueLeft % 60;
-        }
+            }
 
-        modulus = valueLeft % 60;
+            modulus = valueLeft % 60;
 
-        //2 pass
-        if (modulus > 0 && !(modulus == valueLeft)) {
-            int pass2Total = 0;
-            int valueLeft2 = lastValue - 59;
-            valueSaver = valueLeft2;
-            int tempModulus = valueLeft2 % 60;
-            int beforeUnderscore2 = valueLeft2 / 59;
+            //2 pass
+            if (modulus > 0 && !(modulus == valueLeft)) {
+                int pass2Total = 0;
+                int valueLeft2 = lastValue - 59;
+                valueSaver = valueLeft2;
+                int tempModulus = valueLeft2 % 60;
+                int beforeUnderscore2 = valueLeft2 / 59;
 //            beforeUnderscore2 -= modulus;
-            if ((beforeUnderscore2 - 50) >= 0) {
-                stringBuilder.append("L");
-                beforeUnderscore2 -= 50;
-                firstUnderscore = true;
-                pass2Total += 50;
+                if ((beforeUnderscore2 - 50) >= 0) {
+                    stringBuilder.append("L");
+                    beforeUnderscore2 -= 50;
+                    firstUnderscore = true;
+                    pass2Total += 50;
 //          int beforeTwoModulus = valueLeft2 % 3600
-            }
-            for (int i = 0; i < 4; i++) {
-                if ((beforeUnderscore2 - 10) >= 0) {
-                    stringBuilder.append("X");
-                    beforeUnderscore2 -= 10;
-                    firstUnderscore = true;
-                    pass2Total += 10;
-//            int lastValue2 = beforeTwoModulus
                 }
-            }
-            if ((beforeUnderscore2 - 5) >= 0) {
-                stringBuilder.append("V");
-                beforeUnderscore2 -= 5;
-                firstUnderscore = true;
-                pass2Total += 5;
-            }
-            for (int i = 0; i < 4; i++) {
-                if ((beforeUnderscore2 - 1) >= 0) {
-                    stringBuilder.append("I");
-                    beforeUnderscore2 -= 1;
-                    firstUnderscore = true;
-                    pass2Total += 1;
+                for (int i = 0; i < 4; i++) {
+                    if ((beforeUnderscore2 - 10) >= 0) {
+                        stringBuilder.append("X");
+                        beforeUnderscore2 -= 10;
+                        firstUnderscore = true;
+                        pass2Total += 10;
 //            int lastValue2 = beforeTwoModulus
+                    }
                 }
-            }
-            if (firstUnderscore) {
-                stringBuilder.append("_");
-                valueLeft = valueLeft - pass2Total*60;
+                if ((beforeUnderscore2 - 5) >= 0) {
+                    stringBuilder.append("V");
+                    beforeUnderscore2 -= 5;
+                    firstUnderscore = true;
+                    pass2Total += 5;
+                }
+                for (int i = 0; i < 4; i++) {
+                    if ((beforeUnderscore2 - 1) >= 0) {
+                        stringBuilder.append("I");
+                        beforeUnderscore2 -= 1;
+                        firstUnderscore = true;
+                        pass2Total += 1;
+//            int lastValue2 = beforeTwoModulus
+                    }
+                }
+                if (firstUnderscore) {
+                    stringBuilder.append("_");
+                    valueLeft = valueLeft - pass2Total * 60;
 
 //                valueLeft = valueLeft - valueSaver;
+                }
+            } else if (modulus == 0) {
+                stringBuilder.append("I_");
+                valueLeft = valueLeft - 60;
             }
-        } else if (modulus == 0) {
-            stringBuilder.append("I_");
-            valueLeft = valueLeft - 60;
-        }
-        //3 pass
+            //3 pass
 //        int valueLeft2 = lastValue - 60;
 //        valueSaver = valueLeft2;
 //        int beforeUnderscore2 = valueLeft2 / 60;
-        if ((valueLeft - 50) >= 0) {
-            stringBuilder.append("L");
-            valueLeft -= 50;
+            if ((valueLeft - 50) >= 0) {
+                stringBuilder.append("L");
+                valueLeft -= 50;
 //          int beforeTwoModulus = valueLeft2 % 3600
-        }
-        for (int i = 0; i < 4; i++) {
-            if ((valueLeft - 10) >= 0) {
-                stringBuilder.append("X");
-                valueLeft -= 10;
-//            int lastValue2 = beforeTwoModulus
             }
-        }
-        if ((valueLeft - 5) >= 0) {
-            stringBuilder.append("V");
-            valueLeft -= 5;
-        }
-        for (int i = 0; i < 4; i++) {
-            if ((valueLeft - 1) >= 0) {
-                stringBuilder.append("I");
-                valueLeft -= 1;
+            for (int i = 0; i < 4; i++) {
+                if ((valueLeft - 10) >= 0) {
+                    stringBuilder.append("X");
+                    valueLeft -= 10;
 //            int lastValue2 = beforeTwoModulus
+                }
             }
+            if ((valueLeft - 5) >= 0) {
+                stringBuilder.append("V");
+                valueLeft -= 5;
+            }
+            for (int i = 0; i < 4; i++) {
+                if ((valueLeft - 1) >= 0) {
+                    stringBuilder.append("I");
+                    valueLeft -= 1;
+//            int lastValue2 = beforeTwoModulus
+                }
+            }
+            return stringBuilder.toString();
         }
-        return stringBuilder.toString();
     }
 }
 
