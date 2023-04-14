@@ -3,7 +3,6 @@ package converter.tests;
 import converter.KibenianArabicConverter;
 import converter.exceptions.MalformedNumberException;
 import converter.exceptions.ValueOutOfBoundsException;
-import lombok.Value;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -318,7 +317,7 @@ public class ConverterTests {
         assertEquals(converter.toArabic(), 3600);
     }
     //Kibenian input out of bounds of allowed input numbers
-    @Test
+    @Test (expected = MalformedNumberException.class)
     public void KibenianOutOfBounds() throws MalformedNumberException, ValueOutOfBoundsException {
         KibenianArabicConverter converter = new KibenianArabicConverter("LXXXXVIIII__LXXXXVIIII");
     }

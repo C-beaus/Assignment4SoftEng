@@ -3,7 +3,6 @@ package converter;
 import converter.exceptions.MalformedNumberException;
 import converter.exceptions.ValueOutOfBoundsException;
 import lombok.Getter;
-import lombok.Value;
 
 import java.util.regex.Pattern;
 
@@ -153,15 +152,19 @@ public class KibenianArabicConverter {
         Boolean secondUnderscore = false;
         Boolean firstUnderscore = false;
         int valueSaver = 0;
+        int initialValue = valueLeft;
         //1 pass
         if (modulus > 0 && !(modulus == valueLeft)) {
+            int pass1Total = 0;
             int valueLeft2 = lastValue - 3599;
             valueSaver = valueLeft2;
-            int beforeUnderscore2 = valueLeft2 / 3600;
+            int beforeUnderscore2 = valueLeft2 / 3599;
+//            beforeUnderscore2 -= modulus;
             if ((beforeUnderscore2 - 50) >= 0) {
                 stringBuilder.append("L");
                 beforeUnderscore2 -= 50;
                 secondUnderscore = true;
+                pass1Total += 50;
 //          int beforeTwoModulus = valueLeft2 % 3600
             }
             for (int i = 0; i < 4; i++) {
@@ -169,6 +172,7 @@ public class KibenianArabicConverter {
                     stringBuilder.append("X");
                     beforeUnderscore2 -= 10;
                     secondUnderscore = true;
+                    pass1Total =+ 10;
 //            int lastValue2 = beforeTwoModulus
                 }
             }
@@ -176,18 +180,21 @@ public class KibenianArabicConverter {
                 stringBuilder.append("V");
                 beforeUnderscore2 -= 5;
                 secondUnderscore = true;
+                pass1Total += 5;
             }
             for (int i = 0; i < 4; i++) {
                 if ((beforeUnderscore2 - 1) >= 0) {
                     stringBuilder.append("I");
                     beforeUnderscore2 -= 1;
                     secondUnderscore = true;
+                    pass1Total +=1;
 //            int lastValue2 = beforeTwoModulus
                 }
             }
             if (secondUnderscore) {
                 stringBuilder.append("_");
-                valueLeft = valueLeft - valueSaver;
+                valueLeft = valueLeft - pass1Total*3600;
+//                valueLeft = valueLeft - valueSaver;
 //                modulus = valueLeft % 60;
             }
         } else if (modulus == 0) {
@@ -200,13 +207,17 @@ public class KibenianArabicConverter {
 
         //2 pass
         if (modulus > 0 && !(modulus == valueLeft)) {
-            int valueLeft2 = lastValue - 60;
+            int pass2Total = 0;
+            int valueLeft2 = lastValue - 59;
             valueSaver = valueLeft2;
-            int beforeUnderscore2 = valueLeft2 / 60;
+            int tempModulus = valueLeft2 % 60;
+            int beforeUnderscore2 = valueLeft2 / 59;
+//            beforeUnderscore2 -= modulus;
             if ((beforeUnderscore2 - 50) >= 0) {
                 stringBuilder.append("L");
                 beforeUnderscore2 -= 50;
                 firstUnderscore = true;
+                pass2Total += 50;
 //          int beforeTwoModulus = valueLeft2 % 3600
             }
             for (int i = 0; i < 4; i++) {
@@ -214,6 +225,7 @@ public class KibenianArabicConverter {
                     stringBuilder.append("X");
                     beforeUnderscore2 -= 10;
                     firstUnderscore = true;
+                    pass2Total += 10;
 //            int lastValue2 = beforeTwoModulus
                 }
             }
@@ -221,18 +233,22 @@ public class KibenianArabicConverter {
                 stringBuilder.append("V");
                 beforeUnderscore2 -= 5;
                 firstUnderscore = true;
+                pass2Total += 5;
             }
             for (int i = 0; i < 4; i++) {
                 if ((beforeUnderscore2 - 1) >= 0) {
                     stringBuilder.append("I");
                     beforeUnderscore2 -= 1;
                     firstUnderscore = true;
+                    pass2Total += 1;
 //            int lastValue2 = beforeTwoModulus
                 }
             }
             if (firstUnderscore) {
                 stringBuilder.append("_");
-                valueLeft = valueLeft - valueSaver;
+                valueLeft = valueLeft - pass2Total*60;
+
+//                valueLeft = valueLeft - valueSaver;
             }
         } else if (modulus == 0) {
             stringBuilder.append("I_");
