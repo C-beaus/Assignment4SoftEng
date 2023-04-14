@@ -55,7 +55,10 @@ public class KibenianArabicConverter {
          * I {0,4}
          *
          */
-        String string = "(L?X{0,4}(V?)(I{0,4}))";
+//        String string = "(L?X{0,4}(V?)(I{0,4}))";
+        String string = "((L(V?)(I{0,4}))|(X{0,4}(V?)(I{0,4})))";
+//        Pattern patternKibenian = Pattern.compile("^"+ string + "|" + string + "_"+ "|" + string + "_" + string + "|" + string + "__" + "|" + string + "_" + string + "_" + "|" + string + "__" + string + "|" + string + "_" + string + "_" + string + " $");
+//        Pattern test = Pattern.compile("^" + string + "__");
         Pattern patternKibenian = Pattern.compile("^"+ string + "|" + string + "_"+ "|" + string + "_" + string + "|" + string + "__" + "|" + string + "_" + string + "_" + "|" + string + "__" + string + "|" + string + "_" + string + "_" + string + " $");
         Pattern test = Pattern.compile("^" + string + "__");
         if(numberIsKibenian(number)){
