@@ -64,7 +64,13 @@ public class KibenianArabicConverter {
         }
         //else if contains Arabic characters run Arabic check
         else if (numberIsArabic(number)){
-
+            int numInt = Integer.parseInt(number);
+            if (numInt <= 0 || numInt > 215999) {
+                throw new ValueOutOfBoundsException("Number is out of bounds");
+            }
+        }
+        else if (number.matches("^-?\\d+$")){
+            throw new ValueOutOfBoundsException("Number is out of bounds");
         }
         //neither
         else{
@@ -154,6 +160,9 @@ public class KibenianArabicConverter {
         if (!number.matches("[0-9]+")){
             return number;
         }
+//        else if (Integer.parseInt(number) <= 0) {
+//            throw new ValueOutOfBoundsException("Number is out of bounds");
+//        }
         else {
             int numInt = Integer.parseInt(number);
             if (numInt <= 0 || numInt > 215999) {

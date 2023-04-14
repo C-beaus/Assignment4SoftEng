@@ -113,6 +113,7 @@ public class ConverterTests {
     @Test(expected = ValueOutOfBoundsException.class)
     public void NoNegativeArabic() throws MalformedNumberException, ValueOutOfBoundsException {
         KibenianArabicConverter converter = new KibenianArabicConverter("-2");
+//        assertEquals(converter.toKibenian(), )
     }
     @Test(expected = ValueOutOfBoundsException.class)
     public void NoNegativeArabic_2() throws MalformedNumberException, ValueOutOfBoundsException {
