@@ -429,7 +429,7 @@ public class ConverterTests {
     @Test
     public void KibenianToArabicBasic1() throws MalformedNumberException, ValueOutOfBoundsException {
         KibenianArabicConverter converter = new KibenianArabicConverter("XI_XXXXVIII");
-        assertEquals(converter.toArabic(), "708");
+        assertEquals(converter.toArabic(), 708);
     }
         //Arabic to Kibenian
     @Test
@@ -611,3 +611,6 @@ public class ConverterTests {
 * underscores
 * value of kibenian 60 should throw malformedNumberException
  */
+
+//if any kibenian subgroup is greater than 59
+//currently not allowing other letters in between underscores

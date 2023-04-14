@@ -61,9 +61,21 @@ public class KibenianArabicConverter {
             if (!patternKibenian.matcher(number).matches()) {
                 throw new MalformedNumberException("Number contains invalid characters: " + number);
             }
+            else if (number.startsWith("_")) {
+                throw new MalformedNumberException("Number can not start with an underscore");
+            }
         }
         //else if contains Arabic characters run Arabic check
         else if (numberIsArabic(number)){
+            if(!(number.length() < 7)) {
+                throw new ValueOutOfBoundsException("Number is out of bounds");
+            }
+            if (number.equals("0")){
+                throw new ValueOutOfBoundsException("Arabic number entered can not be zero");
+            }
+            if (number.startsWith("0")){
+                throw new MalformedNumberException("Number can not start with or end with a zero");
+            }
             int numInt = Integer.parseInt(number);
             if (numInt <= 0 || numInt > 215999) {
                 throw new ValueOutOfBoundsException("Number is out of bounds");
