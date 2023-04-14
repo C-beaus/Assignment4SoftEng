@@ -17,6 +17,7 @@ public class KibenianArabicConverter {
     // A string that holds the number (Kibenian or Arabic) you would like to convert
     @Getter
     private final String number;
+    private String testNumber;
 
     /**
      * Constructor for the KibenianArabic class that takes a string. The string should contain a valid
@@ -58,12 +59,18 @@ public class KibenianArabicConverter {
         Pattern patternKibenian = Pattern.compile("^"+ string + "|" + string + "_"+ "|" + string + "_" + string + "|" + string + "__" + "|" + string + "_" + string + "_" + "|" + string + "__" + string + "|" + string + "_" + string + "_" + string + " $");
         Pattern test = Pattern.compile("^" + string + "__");
         if(numberIsKibenian(number)){
+            this.testNumber = number;
             if (!patternKibenian.matcher(number).matches()) {
                 throw new MalformedNumberException("Number contains invalid characters: " + number);
             }
             else if (number.startsWith("_")) {
                 throw new MalformedNumberException("Number can not start with an underscore");
             }
+            else if (toArabicSubChecker()) {
+                throw new MalformedNumberException("Number out of bounds");
+            }
+//            else if(toArabic())
+//            toArabic();
         }
         //else if contains Arabic characters run Arabic check
         else if (numberIsArabic(number)){
@@ -112,7 +119,7 @@ public class KibenianArabicConverter {
      *
      * @return An arabic value
      */
-    public int toArabic() {
+    public int toArabic() throws MalformedNumberException{
         // TODO Fill in the method's body
 //        int numberInt = Integer.parseInt(number);
 //        if(numberInt >= 1 && numberInt <= 215999) {
@@ -144,6 +151,9 @@ public class KibenianArabicConverter {
                         break;
                     case '_':
                         result += subTotal * multiplier;
+                        if (subTotal > 59) { //checks if inputted kibenian is out of bounds
+                            throw new MalformedNumberException("Inputted Kibenian has a subgroup greater than 59");
+                        }
                         subTotal = 0;
 
                         if (i > 1 && number.charAt(i - 2) == '_') {
@@ -161,14 +171,73 @@ public class KibenianArabicConverter {
             return result;
         }
     }
+    public Boolean toArabicSubChecker() throws MalformedNumberException{
+        // TODO Fill in the method's body
+//        int numberInt = Integer.parseInt(number);
+//        if(numberInt >= 1 && numberInt <= 215999) {
+//            return numberInt;
+//        }
+//        if (number.matches("[0-9]+")){
+//            return Integer.parseInt(number);
+//        }
+            Boolean subChecker = false;
+            int result = 0;
+            int subTotal = 0;
+            int multiplier = 1;
+
+            for (int i = testNumber.length() - 1; i >= 0; i--) {
+                char c = testNumber.charAt(i);
+
+                switch (c) {
+                    case 'I':
+                        subTotal += 1;
+                        break;
+                    case 'V':
+                        subTotal += 5;
+                        break;
+                    case 'X':
+                        subTotal += 10;
+                        break;
+                    case 'L':
+                        subTotal += 50;
+                        break;
+                    case '_':
+                        result += subTotal * multiplier;
+                        if (subTotal > 59) { //checks if inputted kibenian is out of bounds
+                            subChecker = true;
+                        }
+                        subTotal = 0;
+
+                        if (i > 1 && testNumber.charAt(i - 2) == '_') {
+                            multiplier *= 3600;
+                        } else {
+                            multiplier *= 60;
+                        }
+
+                        break;
+                }
+
+            }
+        if (subTotal > 59) { //checks if inputted kibenian is out of bounds
+            subChecker = true;
+        }
+
+//            result += subTotal * multiplier;
+            return subChecker;
+
+    }
+
 
     /**
      * Converts the number to an Kibenian numeral or returns the current value if it is already in the Kibenian form.
      *
      * @return A Kibenian value
      */
-    public String toKibenian() throws ValueOutOfBoundsException {
+    public String toKibenian() throws ValueOutOfBoundsException, MalformedNumberException {
         // TODO Fill in the method's body
+        int sumAfterFirst = 0;
+        int sumAfterSecond = 0;
+        int sumAfterThird = 0;
         if (!number.matches("[0-9]+")){
             return number;
         }
@@ -189,6 +258,7 @@ public class KibenianArabicConverter {
             Boolean firstUnderscore = false;
             int valueSaver = 0;
             int initialValue = valueLeft;
+            int pass3Total = 0;
             //1 pass
             if (modulus > 0 && !(modulus == valueLeft)) {
                 int pass1Total = 0;
@@ -230,6 +300,7 @@ public class KibenianArabicConverter {
                 if (secondUnderscore) {
                     stringBuilder.append("_");
                     valueLeft = valueLeft - pass1Total * 3600;
+                    sumAfterFirst = pass1Total;
 //                valueLeft = valueLeft - valueSaver;
 //                modulus = valueLeft % 60;
                 }
@@ -242,12 +313,22 @@ public class KibenianArabicConverter {
             modulus = valueLeft % 60;
 
             //2 pass
-            if (modulus > 0 && !(modulus == valueLeft)) {
+            if (modulus > 0 && !(modulus == valueLeft) ) { //&& (lastValue > 59)  //last value has to at least be 60
                 int pass2Total = 0;
                 int valueLeft2 = lastValue - 59;
                 valueSaver = valueLeft2;
-                int tempModulus = valueLeft2 % 60;
-                int beforeUnderscore2 = valueLeft2 / 59;
+                int tempModulus = valueLeft2 % 59;
+                int beforeUnderscore2;
+
+                if((valueLeft2/60 == 0)) {
+                    beforeUnderscore2 = 1;
+                }
+//                if(valueLeft2 > 60) {
+//                    beforeUnderscore2 = valueLeft2 / 59;
+//                }
+                else{
+                    beforeUnderscore2 = valueLeft2 / 59;
+                }
 //            beforeUnderscore2 -= modulus;
                 if ((beforeUnderscore2 - 50) >= 0) {
                     stringBuilder.append("L");
@@ -283,6 +364,7 @@ public class KibenianArabicConverter {
                 if (firstUnderscore) {
                     stringBuilder.append("_");
                     valueLeft = valueLeft - pass2Total * 60;
+                    sumAfterSecond = pass2Total;
 
 //                valueLeft = valueLeft - valueSaver;
                 }
@@ -297,25 +379,33 @@ public class KibenianArabicConverter {
             if ((valueLeft - 50) >= 0) {
                 stringBuilder.append("L");
                 valueLeft -= 50;
+                pass3Total += 50;
 //          int beforeTwoModulus = valueLeft2 % 3600
             }
             for (int i = 0; i < 4; i++) {
                 if ((valueLeft - 10) >= 0) {
                     stringBuilder.append("X");
                     valueLeft -= 10;
+                    pass3Total += 10;
 //            int lastValue2 = beforeTwoModulus
                 }
             }
             if ((valueLeft - 5) >= 0) {
                 stringBuilder.append("V");
                 valueLeft -= 5;
+                pass3Total += 5;
             }
             for (int i = 0; i < 4; i++) {
                 if ((valueLeft - 1) >= 0) {
                     stringBuilder.append("I");
                     valueLeft -= 1;
+                    pass3Total += 1;
 //            int lastValue2 = beforeTwoModulus
                 }
+            }
+            sumAfterThird = pass3Total;
+            if((sumAfterFirst > 59)||(sumAfterSecond > 59)||(sumAfterThird > 59)) { //probably not necessary
+                throw new MalformedNumberException("At least one subgroup of the Kibenian is greater than 59");
             }
             return stringBuilder.toString();
         }
