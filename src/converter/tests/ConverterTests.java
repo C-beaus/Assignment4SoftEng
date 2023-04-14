@@ -331,7 +331,7 @@ public class ConverterTests {
     //check if valid Arabic format
 
     //Exceptions
-    @Test(expected = ValueOutOfBoundsException.class)
+    @Test(expected = MalformedNumberException.class)
     public void ArabicLeadingZero() throws MalformedNumberException, ValueOutOfBoundsException {
         String leadingZero = "0123";
         KibenianArabicConverter converter = new KibenianArabicConverter(leadingZero);
@@ -580,7 +580,7 @@ public class ConverterTests {
     }
 
     //More for handling of underscores
-    @Test
+    @Test (expected = MalformedNumberException.class)
     public void HangingUnderscoresOkay() throws MalformedNumberException, ValueOutOfBoundsException {
         KibenianArabicConverter converter = new KibenianArabicConverter("I___I");
 //        assertEquals(converter.toArabic(), 3601);
@@ -601,4 +601,12 @@ public class ConverterTests {
 /* What's left to Check
 * three or more underscores in submission throws Malformed
 * Only submitting an underscore throws malformed
+ */
+
+/*Notes
+* fix Kibenian to Arabic as anything with two underscores to the right (even if not directly right of it) should be multiplied by 3600
+* make functionality for converting arabic to arabic and kibenian to kibenian just passes back the same thing
+* values out of bounds exceptions not being thrown
+* underscores
+* value of kibenian 60 should throw malformedNumberException
  */
