@@ -96,6 +96,10 @@ public class KibenianArabicConverter {
      */
     public int toArabic() {
         // TODO Fill in the method's body
+//        int numberInt = Integer.parseInt(number);
+//        if(numberInt >= 1 && numberInt <= 215999) {
+//            return numberInt;
+//        }
         int result = 0;
         int subTotal = 0;
         int multiplier = 1;
